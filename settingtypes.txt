@@ -1,0 +1,1 @@
+sleep_skip_percent (Percent of players required to skip night) int 100 1 100
