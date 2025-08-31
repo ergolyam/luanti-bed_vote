@@ -18,6 +18,40 @@ local function bed_mod_name()
   return nil
 end
 
+local function is_in_overworld(ply)
+  local pos = ply and ply:get_pos()
+  if not pos then
+    return true
+  end
+  local w = rawget(_G, "mcl_worlds")
+  if type(w) ~= "table" then
+    return true
+  end
+  if type(w.pos_to_dimension) == "function" then
+    local d = w.pos_to_dimension(pos)
+    return d == "overworld" or d == w.DIMENSION_OVERWORLD
+  end
+  if type(w.get_dimension) == "function" then
+    local d = w.get_dimension(pos)
+    return d == "overworld" or d == w.DIMENSION_OVERWORLD
+  end
+  return true
+end
+
+local function eligible_player_count(bed_mod)
+  local list = minetest.get_connected_players()
+  if bed_mod ~= "mcl_beds" then
+    return #list
+  end
+  local n = 0
+  for _, ply in ipairs(list) do
+    if is_in_overworld(ply) then
+      n = n + 1
+    end
+  end
+  return n
+end
+
 local function sleepers_info(bed_mod)
   local set = _G[bed_mod] and _G[bed_mod].player
   if type(set) ~= "table" then
@@ -62,7 +96,7 @@ minetest.register_globalstep(function(dtime)
     return
   end
 
-  local total = #minetest.get_connected_players()
+  local total = eligible_player_count(mod)
   if total == 0 then
     return
   end
