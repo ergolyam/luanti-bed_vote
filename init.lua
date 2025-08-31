@@ -71,6 +71,15 @@ end
 local function skip_and_get_up(bed_mod)
   if bed_mod == "mcl_beds" then
     local m = mcl_beds
+
+    local w = rawget(_G, "mcl_weather")
+    if type(w) == "table" then
+      local cur = (type(w.get_weather) == "function") and w.get_weather() or w.state
+      if cur == "thunder" and type(w.change_weather) == "function" then
+        w.change_weather("none")
+      end
+    end
+
     if m.update_sleeping_formspecs then m.update_sleeping_formspecs(true)
     elseif m.update_formspecs then m.update_formspecs(true) end
     if m.skip_night then m.skip_night() end
