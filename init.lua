@@ -81,6 +81,11 @@ local function skip_and_get_up(bed_mod)
   end
 end
 
+if required_percent() >= 100 then
+  minetest.log("action", "[sleep_skip] disabled: sleep_skip_percent=100 (delegating to bed mod)")
+  return
+end
+
 local skipped_once = false
 local acc = 0
 
